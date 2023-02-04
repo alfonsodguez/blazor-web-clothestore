@@ -40,21 +40,21 @@ Si un usuario trata de comprar un número mayor a estas dos cotas, se mostrará 
 ## **DIAGRAMA DE BASE DE DATOS** 
 Para la creación del diagrama de base de datos instalé las dependencias de *Visual Studio Build Tools*. En la siguiente captura se puede observar como solo represento aquellas tablas necesarias para el funcionamiento de mi aplicación, por tanto, omito las que se crean por defecto con *EF*. ![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.001.png)
 
-![](diagram.png)
+![](./doc/diagram.png)
 
 ## **DESARROLLOS A DESTACAR** 
 ## ***TreeView*** 
 El *treeview* está pensado para ser escalable, independientemente de las categorías o subcategorías que se le puedan añadir en un futuro desarrollo, se van a mostrar correctamente.  
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.003.jpeg)
+![](./doc/treeview1.png)
 
 **Ilustración 1: selección de la categoría “padre” “Ropa”** 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.004.jpeg)
+![](./doc/treeview2.png)
 
 **Ilustración 2: selección de la categoría “hijo” “Camisas”** 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.005.jpeg)
+![](./doc/treeview3.png)
 
 **Ilustración 3: selección categoría “nieto” “Camisas informales”** 
 
@@ -64,9 +64,9 @@ Este  es  el  bloque  de  código  con  más  algoritmia  de  toda  la  aplicaci
 
 Vayamos al código: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.006.jpeg)
+![](./doc/treeview_code1.png)
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.007.png)
+![](./doc/treeview_code2.png)
 
 Estos dos componentes conforman el *treeview*.  
 
@@ -77,7 +77,7 @@ En este caso, el identificador será el valor 0 y se corresponderá a las catego
 ## ***Productos, tallas y stock***  
 Así se vería en la aplicación la vista con los detalles de un producto cualquiera:
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.008.jpeg)
+![](./doc/details_product.png)
 
 El contenido de la vista es dinámico, desde la foto, la marca de ropa, el precio, hasta las tallas con su correspondiente precio y stock, del que solo muestro un mensaje de aquellas tallas que tengan un número de stock inferior a tres, y el contenido del componente *accordion* de *Bootstrap.*  
 
@@ -86,13 +86,13 @@ Vayamos por partes:
 ### a) Tablas
 Primero veremos cómo está almacenado el contenido dinámico en la base de datos. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.009.jpeg)
+![](./doc/table1.png)
 
 **Ilustración  4:  extracto  tabla  Productos.  Señalado  en  azul  el  producto  mostrado  en  la  vista** 
 
 **anterior.** 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.010.jpeg)
+![](./doc/table2.png)
 
 **Ilustración 5: tabla con el stock de cada talla del producto.** 
 
@@ -103,7 +103,7 @@ En  la  primera  cada registro único  corresponde  a  un  producto,  en  cambio
 ### 2) Controlador 
 El siguiente extracto de código muestra como enlazo los datos de ambas tablas almacenando  en  cada  producto  que  recupero  de  la  base  de  datos  sus correspondiente tallas con stock que luego pintaré en la vista.   
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.011.jpeg)
+![](./doc/controller.png)
 
 **Ilustración 6: bloque de código en 2ClienteController”** 
 
@@ -112,33 +112,33 @@ Esto es posible añadiendo una propiedad llamada “Stock” que he definido en 
 ### 3) *State container* 
 Otro criterio que he seguido es recuperar todos los productos de una tacada para no tener que hacer más peticiones al servidor cada vez que un usuario quiera ver la información detallada de un producto. Esto es posible al  utilizar la comunicación entre componentes. Para este caso en concreto me apoyo en un *state container*. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.012.jpeg)
+![](./doc/statecontainer.png)
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.013.jpeg)
+![](./doc/statecontainer2.png)
 
 Como podemos observar en el código, en el “StateContainerProducto” indicamos que componentes queremos que tengan acceso a los métodos del servicio.  
 
 Veamos su uso en el componente:  
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.014.jpeg)
+![](./doc/statecontainer3.png)
 
 Este componente “hijo*”* recibe un objeto Producto pasado por el componente “padre” en cascada. A continuación, se envía al *state container* por medio de uno de sus  métodos “PassProducto” que ha sido inyectado. Una vez “almacenado” en el *state container,* podemos recuperarlo en otros componentes. No obstante, solo pueden ser    aquellos que he mencionado con anterioridad.  
 
 El código para recuperar esos datos se ve da la siguiente forma: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.015.png)
+![](./doc/statecontainer4.png)
 
 ### 4) *Dropdown* tallas  
 
 Para  el  *dropdown*  he  requerido  del  uso  de  un  *templated  component.*  Su implementación se ve de la siguiente manera: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.016.png)
+![](./doc/dropdown.png)
 
 **Ilustración 7: fragmento de código del componente DetallesProducto** 
 
 Este es como un mini bloque *html,* pero dinámico que se incrusta en la vista del componente. Así se vería implementado en la vista: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.017.png)
+![](./doc/dropdown2.png)
 
 **Ilustración 8: fragmento de código vista DetallesProducto** 
 
@@ -147,26 +147,26 @@ Para  la  creación  de  las  tablas  me  he  servido  de  *EF*,  lo  que  me  h
 
 La implementación para almacenar y recuperar listas es mucho más compleja que para objetos. Como podemos observar en la siguiente captura: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.018.jpeg)
+![](./doc/entity.jpeg)
 
 En la base de datos lo almacena serializado como un *JSON* tal como se muestra aquí: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.019.png)
+![](./doc/entity2.jpeg)
 
 Con objetos es más sencillo: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.020.png)
+![](./doc/entity3.jpeg)
 
 En la tabla se vería así: 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.021.png)
+![](./doc/entity4.jpeg)
 
 ## ***Control de stock y transacciones*** 
 Una vez que el usuario finaliza la compra, se realiza una actualización de las tablas que  intervienen  en  el  proceso:  “PedidoCliente”,  “ItemsPedido”,  “StockProducto”. Como hay que lanzar varias operaciones de escritura sobre la base de datos, hago uso de las *transacciones* para que se grabe en todas las tablas haciendo *commit,* o 
 
 en ninguna, con un *auto*-*rollback* en caso de una no deseable circunstancia externa. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.022.jpeg)
+![](./doc/stock.jpeg)
 
 **Ilustración 9: fragmento de código del “ClienteController”** 
 
@@ -177,13 +177,11 @@ El *badge* es un componente de *Bootstrap* que uso para informar al usuario de q
 
 Aquí una comparativa visual del icono de la cesta sin compra y con la cesta llena. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.023.png)
-
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.024.png)
+![](./doc/badge1.jpeg)
 
 **Ilustración 10: *header* del *layout*** 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.025.jpeg)
+![](./doc/badge2.jpeg)
 
 **Ilustración 11: fragmento código *html* del *Layout*** 
 
@@ -191,25 +189,19 @@ Lo más importante de esta implementación es que intervienen varios componentes
 
 Todo esto ha de ser sincronizado para que la información sea consistente allá donde se  use.  Para  lograrlo,  hago  dos  cosas:  usar  el  *state  container*  -  necesario  sino perderíamos estos datos temporales- y pasar en cascada el *layout* -eso nos permite tener acceso a los métodos implementados en este-. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.026.png)
+![](./doc/badge3.jpeg)
 
 El uso del objeto *\_\_Layout* en un componente se haría de la siguiente manera:  
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.027.png)
+![](./doc/badge4.jpeg)
 
  ## ***Alert tab y control de clics en botón comprar***  
 El componente *alert* de *Bootstrap* se “dispara” cuando un usuario infringe la regla de negocio  que  he  mencionado  anteriormente.  Para  ello  hago  un  seguimiento  del número de clics que se hacen por talla de producto. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.028.png)![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.029.png)
+![]()
 
 Aquí  sí  que  he  necesitado  usar  código  JavaScript  para  mostrar  y  cerrar  esta etiqueta. Esto es posible gracias al mecanismo de interoperabilidad *JSRuntime* que provee *Blazor*. 
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.030.png)
+![]()
 
 Llamo  a  mi  función   JavaScript  “alert”.  Esta  es  una  función  que  admite  tres parámetros: el mensaje de alerta que quiero que aparezca en la vista, el tipo de componente  *alert,*  en  mi  caso  *danger,*  y  por  último,  si  lo  quiero  hacer  visible  u ocultarlo. 
-
-## **WEBGRAFÍA 
-[https://docs.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-6.0 ](https://docs.microsoft.com/en-us/aspnet/core/blazor/?view=aspnetcore-6.0)
-[https://stackoverflow.com/ ](https://stackoverflow.com/)**
-[https://www.zalando.es/ ](https://www.zalando.es/) 
-

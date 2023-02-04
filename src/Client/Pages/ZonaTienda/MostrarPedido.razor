@@ -1,0 +1,155 @@
+﻿
+@page "/Tienda/MostrarPedido"
+@inject IOrderService         _orderService
+@inject StateContainerService _stateContainer
+@inject IStorageService       _storageService
+@inject NavigationManager     _navigated
+@inject IJSRuntime            _js
+
+@if (_existItemsInOrder)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-8">
+                <!--mini wiew to each item of order-->
+                <div class="card">
+                    <h5 class="card-header"><strong>Tu cesta</strong></h5>
+                    <div class="card-body">
+                        @foreach (KeyValuePair<OrderItem, int> item in _dictOrderItems)
+                        {
+                            <MiniPedido ItemDelPedido="@item" ModifyItemEvent="@ModifyAmountOfItem"></MiniPedido>
+                        }
+                    </div>
+                    <div class="card-footer text-muted">
+                        <img src="/images/info.png" />
+                        <small>Recuerda: no podemos reservar los artículos en tu cesta.</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <!--total, subtotal, delivery cost-->
+                <div class="card">
+                    <h5 class="card-header"><strong>Total</strong></h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="card-text"><small>Subtotal</small></span>
+                            </div>
+                            <div class="col-6 text-sm-right">
+                                <span class="card-text"><small>@this._subtotal&nbsp;€</small></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="card-text"><small>Envio</small></span>
+                            </div>
+                            <div class="col-6 text-sm-right">
+                                <span class="card-text"><small>@this._deliveryCosts&nbsp;€</small></span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-6">
+                                <span class="card-text"><small><strong>Total (IVA incluido)</strong></small></span>
+                            </div>
+                            <div class="col-6 text-sm-right">
+                                <span class="card-text"><small><strong>@this._total&nbsp;€</strong></small></span>
+                            </div>
+                        </div>
+                        <br />
+                        <NavLink href="/Tienda/FinalizarPedido" @onclick="@StorageOrderInClient" class="btn btn-success w-100">Comenzar Pedido</NavLink>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div><h6>&nbsp;</h6></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-9" style="text-align: center">
+                <img src="/images/online-shopping.png" />
+                <div><h6>&nbsp;</h6></div>
+                <p><small><strong>Llena tu cesta de nuevas tendencias</strong></small></p>
+                <div>
+                    <button @onclick="@(() => this._navigated.NavigateTo("/Cliente/Login"))" type="button" class="btn btn-outline-success">INICIAR SESIÓN</button>
+                    <button @onclick="@(() => this._navigated.NavigateTo("/"))" type="button" class="btn btn-success">VOLVER A LA TIENDA</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private Boolean _existItemsInOrder = false;
+    private Decimal _deliveryCosts;
+    private Decimal _subtotal;
+    private Decimal _total;
+    private List<String> _counterClicksBySize = new List<String>();
+    private Dictionary<OrderItem, int> _dictOrderItems = new Dictionary<OrderItem, int>();
+
+    //------------badge del layout----------------
+    [CascadingParameter]
+    public __Layout LayoutContainer { get; set; }
+
+    [Parameter]
+    public int NumberOfItemsInCard { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        this._counterClicksBySize = this._stateContainer.SelectListOfClicksBySize;
+        this.NumberOfItemsInCard  = LayoutContainer.GetNumberOfItemsInCard();
+        this._dictOrderItems      = this._orderService.GetOrderItems();
+
+        if (_dictOrderItems.Keys.Count > 0)
+        {
+            this._existItemsInOrder = true;
+            this._deliveryCosts     = new Order().DeliveryCosts;
+            this._subtotal          = this.CalculateSubtotal(_dictOrderItems.Keys.ToList<OrderItem>());
+            this._total             = _deliveryCosts + _subtotal;
+            StateHasChanged();
+        }
+    }
+
+    private void ModifyAmountOfItem(OrderItem item)
+    {
+        if (item.OrderAmount == 0)
+        {
+            this._dictOrderItems.Remove(item);
+            this._orderService.RemoveProductFromOrder(item);
+        }
+        else
+        {
+            OrderItem _item = this._dictOrderItems.FirstOrDefault(_key => _key.Key.OrderId == item.OrderId).Key;
+            _item = item;
+            this._orderService.ModifyProducFromOrder(_item);
+        }
+        this._subtotal = this.CalculateSubtotal(this._dictOrderItems.Keys.ToList<OrderItem>());
+        this._total    = _deliveryCosts + _subtotal;
+
+        this._counterClicksBySize.RemoveAll((String size) => size == item.Size);
+        this._counterClicksBySize.AddRange(Enumerable.Repeat(item.Size, item.OrderAmount));
+        this._stateContainer.SaveListOfClicksBySize(this._counterClicksBySize);
+
+        this.NumberOfItemsInCard = item.OrderAmount;
+        this.LayoutContainer.SetNumberOfItemsInCard(NumberOfItemsInCard);
+        StateHasChanged();
+    }
+
+    private Decimal CalculateSubtotal(List<OrderItem> listaitems)
+    {
+        return listaitems.Sum((OrderItem item) => item.SizePrice * item.OrderAmount);
+    }
+
+    private async Task StorageOrderInClient()
+    {
+        this._stateContainer.SaveNumberOfItemsInCard(NumberOfItemsInCard);
+        List<OrderItem> _listOrderItems = this._dictOrderItems.Keys.ToList<OrderItem>();
+        await this._storageService.InsertaItemsPedidoInStorage(_listOrderItems);
+    }
+}

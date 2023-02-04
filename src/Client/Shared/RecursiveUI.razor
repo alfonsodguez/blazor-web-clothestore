@@ -1,0 +1,41 @@
+﻿@inject NavigationManager _navigated
+
+@foreach (var item in categoriesList.Where(subcatg => subcatg.CategoryParentId == ParentId))
+{
+    var collapse = true;
+    var node     = item.CategoryName;
+    <li class="nav-item px-2">
+        <NavLink @onclick="@(() => ToggleNavMenu(item))" class="nav-link">@item.CategoryName.Split(";")[0]</NavLink>
+        
+        @if (collapse == @collapseNavMenu && node == @nodeParent)
+        {
+            @if (categoriesList.Where(c => c.CategoryParentId == item.CategoryId).Any())
+            {
+                <ul class="nav flex-column">
+                    <!--====== **magic** =====-->
+                    <RecursiveUI ParentId="item.CategoryId"></RecursiveUI>
+                </ul>
+            }
+        }
+    </li>
+}
+
+
+@code {
+    [Parameter]
+    public int ParentId { get; set; }
+
+    [CascadingParameter]
+    public List<Category> categoriesList { get; set; }
+
+    private bool   collapseNavMenu = false;
+    private String nodeParent      = null;
+
+    private void ToggleNavMenu(Category item)
+    {
+        collapseNavMenu = !collapseNavMenu;
+        this.nodeParent = item.CategoryName;
+        StateHasChanged();
+        this._navigated.NavigateTo($@"/Tienda/Productos/{item.CategoryName.Split(";")[1]}");
+    }
+}

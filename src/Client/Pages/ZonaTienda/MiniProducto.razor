@@ -1,0 +1,29 @@
+﻿@inject NavigationManager     _navigated
+@inject StateContainerService _stateContainer
+
+<div class="col-4 mb-4 col-md-4">
+    <div class="card btn btn-light" @onclick="@DetailsProduct">
+        <img src="/images/@(this.Clothes.ImageId + ".jpg")" class="card-img-top" alt="img"/>
+        <div class="card-body">
+            <span class="card-text">@this.Clothes.Brand</span>
+            <h6 class="card-text">@this.Clothes.ProductName-@this.Clothes.CategoryProduct-@this.Clothes.Color</h6>
+            @if (this.Clothes.Discount > 0) {
+                <span class="text-danger"><strong>@(this.Clothes.Price - Math.Floor(this.Clothes.Discount * this.Clothes.Price*100)/100)&nbsp;€</strong></span>
+                <span class="d-inline text-muted"><del>@this.Clothes.Price&nbsp;€</del></span>
+            } else {
+                <span class="card-text">@this.Clothes.Price&nbsp;€</span>
+            }   
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Product Clothes { get; set; }     
+
+    protected void DetailsProduct()
+    {
+        this._stateContainer.SaveProduct(this.Clothes);
+        this._navigated.NavigateTo("/Tienda/DetallesProducto");
+    }
+}

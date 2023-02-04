@@ -1,0 +1,24 @@
+﻿@inject IRestService      _restService
+@inject NavigationManager _navigation
+
+<CascadingValue Value="categoriesList">
+    <ul class="nav flex-column">
+        <RecursiveUI ParentId=0></RecursiveUI>
+    </ul>
+</CascadingValue>
+
+@code {
+    List<Category> categoriesList = new List<Category>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            this.categoriesList = await this._restService.GetCategories();                       
+        }
+        catch (Exception)
+        {
+            this._navigation.NavigateTo("/");
+        }
+    }
+}

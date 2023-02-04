@@ -1,0 +1,100 @@
+﻿@page "/Cliente/CustomerLogin"
+@layout EmptyLayout
+@inject IJSRuntime        _js
+@inject IRestService      _restService
+@inject NavigationManager _navigation
+@inject IStorageService   _storageService
+@using System.Diagnostics;
+@using System.Threading.Tasks;
+
+@if (_isVisible)
+{
+    <div class="col-6 d-flex justify-content-center">
+        <!--logo de zalandu-->
+        <button @onclick="@(() => this._navigation.NavigateTo("/Tienda"))" class="btn btn-outline-light border-0">
+            <img src="images/logo_zalandu.png" />
+        </button>
+    </div>
+    <div class="container">
+        <div class="row vh-100 justify-content-center align-items-center">
+            <div class="col-4">
+                <EditForm Model="@_customer" OnSubmit="@CustomerLogin">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                    <span class="text-danger">@this._errorMessage</span>
+                    <div class="card w-100 p-3 border border-secondary" style="background-color: snow">
+                        <div class="mb-4 card-body">
+                            <div class="card-title text-center">
+                                <h5 class="card-title"><strong>Te damos la bienvenida</strong></h5>
+                            </div>
+                            <div class="text-center" style="height: 50px;">
+                                <span>a Zalandú</span>
+                            </div>
+                            <div class="form-group form-floating">
+                                <InputText @bind-Value="@_customer.Email" type="email" class="form-control" id="inputEmail" placeholder="name@example.com" required />
+                                <label for="inputEmail">Email</label>
+                                <ValidationMessage For="@(()=> _customer.Email)"></ValidationMessage>
+                            </div>
+                            <div align="right">
+                                <span><NavLink href="Cliente/ForgotPassword"><small>Forgot password?</small></NavLink></span>
+                            </div>
+                            <div class="form-group form-floating">
+                                <InputText @bind-Value="@_customer.Password" type="password" class="form-control" id="inputPassword" placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                <label for="inputPassword">Password</label>
+                                <ValidationMessage For="@(()=> _customer.Password)"></ValidationMessage>
+                            </div>
+                            <br>
+                            <div class="form-row">
+                                <button type="submit" class="btn btn-success w-100">Iniciar sesión</button>
+                            </div>
+                        </div>
+                    </div>
+                </EditForm>
+                <hr />
+                <div>
+                    <h6><strong>¿Eres nuevo/a?</strong></h6>
+                    <button @onclick="@(() => this._navigation.NavigateTo("/Cliente/Registro"))" type="button" class="btn btn-light border-dark w-100">Regístrate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{    
+    <!--loading spinner-->
+    <div class="align-middle">
+        <div class="col" style="text-align: center">
+            <button class="btn btn-success" type="button" disabled>
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                Loading...
+            </button>
+        </div>
+    </div>
+}
+
+@code {
+    private Customer.Credentials _customer = new Customer.Credentials();
+    private String _errorMessage = null;
+    private bool   _isVisible    = true;
+
+    protected async Task CustomerLogin()
+    {
+        await this._storageService.DeleteDB();
+        this._customer.ConfirmPassword = this._customer.Password;
+
+        RESTMessage _response = await this._restService.CustomerLogin(_customer);
+        if (_response.Message == "CustomerLogin ok")
+        {
+            await this._storageService.InsertaClienteJWTInStorage(_response.CustomerInfo, _response.Token);
+
+            //add settimeoup to allow time to make javascript commands and while we showing bootstrap spinner
+            this._isVisible = false;
+            StateHasChanged();
+            await Task.Delay(40000);
+            this._navigation.NavigateTo("/");
+        }
+        else
+        {
+            this._errorMessage = _response.Message;
+        }
+    }
+}

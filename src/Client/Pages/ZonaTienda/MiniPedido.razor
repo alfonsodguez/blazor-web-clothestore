@@ -1,0 +1,73 @@
+﻿<div class="container">
+    <div class="row">
+        <!--photo producto-->
+        <div class="col-2">
+            <img src="/images/@(this.OrderItem.Key.OrderProduct.ImageId + ".jpg")" class="img-fluid text-center" alt="img" />
+        </div>
+        <div class="col-10">
+            <div class="row">
+                <!--info producto-->
+                <div class="col-8">
+                    <div class=""><small><strong>@this.OrderItem.Key.OrderProduct.Brand</strong></small></div>
+                    <div><small>@this.OrderItem.Key.OrderProduct.ProductName</small></div>
+                    <div><small>Color: @this.OrderItem.Key.OrderProduct.Color.</small></div>
+                    <div><small>Talla: @this.OrderItem.Key.Size</small></div>
+                </div>
+                <!--dropdown amount-->
+                <div class="col-4 text-sm-right">
+                    <select @onchange="(evt) => SetAmount(evt)" class="form-select" aria-label="Default select example">
+                        @{ 
+                            int _stock = this.OrderItem.Value;
+                            int _amountToSell;
+                            int _orderAmount = this.OrderItem.Key.OrderAmount;  
+                        }
+                        @if (_stock <= 3) {
+                            _amountToSell = _stock; 
+                        } else {
+                            _amountToSell = 3; 
+                        }
+                        @for (int i = 1; i <= _amountToSell; i++) {
+                            if (i == _orderAmount) { 
+                                <option value=@i selected>@i</option> 
+                            } else { 
+                                <option value=@i>@i</option> 
+                            }
+                        }
+                    </select>
+                </div>
+            </div>       
+            <br />
+            <div class="row">
+                <!--botton delete order-->
+                <div class="col-8">
+                    <button @onclick="@(() => SetAmount(null))" type="button" class="btn btn-light">
+                        <img src="/images/papelera.png"/>
+                        Eliminar
+                    </button>
+                </div>
+                <!--price product-->
+                <div class="col-4 text-sm-right">
+                    <strong>@this.OrderItem.Key.SizePrice&nbsp;€</strong>
+                </div>
+            </div>
+        </div>      
+    </div>
+    <hr />
+</div>
+
+
+@code {
+    [Parameter]
+    public KeyValuePair<OrderItem,int> OrderItem { get; set; }
+
+    [Parameter]
+    public EventCallback<OrderItem> ModifyItemEvent { get; set; }
+
+#nullable enable
+    private async Task SetAmount(ChangeEventArgs? evt)
+    {
+        int _amount = evt == null ? 0 : System.Convert.ToInt16(evt.Value?.ToString());
+        this.OrderItem.Key.OrderAmount = _amount;
+        await this.ModifyItemEvent.InvokeAsync(OrderItem.Key);
+    }
+}

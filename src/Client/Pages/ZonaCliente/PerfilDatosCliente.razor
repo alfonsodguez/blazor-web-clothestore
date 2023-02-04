@@ -1,0 +1,220 @@
+﻿@page "/Cliente/Panel/"
+@page "/Cliente/Panel/DatosCliente"
+@inject IRestService      _restService
+@inject NavigationManager _navigated
+
+@if (this.CustomerLogged != null)
+{
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div>
+                    <h5>Tus Datos</h5>
+                    <p><small>Aquí puedes revisar y actualizar tus datos de usuario Gestiona tus contraseñas y cómo iniciar sesión.</small></p>
+                </div>
+                <br />
+                <!--================== section user data ============-->
+                <div class="row">
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-2">
+                                <!--icon profile-->
+                                <img src="/images/profile.png" />
+                            </div>
+                            <div class="col-10">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="row">
+                                            <div>Nombre</div>
+                                            <div><small>@CustomerLogged.Name</small></div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div>Apellidos</div>
+                                            <div><small>@CustomerLogged.Surname</small></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <div>PhoneNumber móvil</div>
+                                            <div><small>@CustomerLogged.DeliveryAddress.PhoneNumber</small></div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div>DNI</div>
+                                            <div><small>@CustomerLogged.Dni</small></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-outline-light border-dark active w-100" data-bs-toggle="modal" data-bs-target="#modalprofile">Modificar</button>
+                        <!--=============================== Modal modify data ============================================================-->
+                        <div class="modal fade" id="modalprofile" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="profileModalLabel">&nbsp;Actualizar datos</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <EditForm Model="@CustomerLogged" OnValidSubmit="@UpdateCustomerInfo">
+                                            <DataAnnotationsValidator></DataAnnotationsValidator>
+                                            <div class="form-row">
+                                                <div class="form-group form-floating col-sm-6">
+                                                    <InputText @bind-Value="@CustomerLogged.Dni" type="text" class="form-control" id="inputDni" placeholder="12345678-R" required />
+                                                    <label for="inputDni">DNI*</label>
+                                                    <ValidationMessage For="@(() => CustomerLogged.Dni)"></ValidationMessage>
+                                                </div>
+                                                <div class="form-group form-floating col-sm-6">
+                                                    <InputDate @bind-Value="@CustomerLogged.Birth" type="date" class="form-control" id="inputFecha" placeholder="Fecha de Nacimiento" required />
+                                                    <label for="inputFecha">Fecha de Nacimiento*</label>
+                                                    <ValidationMessage For="@(() => (DateTime)CustomerLogged.Birth)"></ValidationMessage>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group form-floating col-sm-6">
+                                                    <InputText @bind-Value="@CustomerLogged.Name" class="form-control" id="inputNombre" placeholder="Nombre" required />
+                                                    <label for="inputNombre">Nombre*</label>
+                                                    <ValidationMessage For="@(() => CustomerLogged.Name)"></ValidationMessage>
+                                                </div>
+                                                <div class="form-group form-floating col-sm-6">
+                                                    <InputText @bind-Value="@CustomerLogged.Surname" type="text" class="form-control" id="inputApe" placeholder="Apellidos" required />
+                                                    <label for="inputApe">Apellidos*</label>
+                                                    <ValidationMessage For="@(() => CustomerLogged.Surname)"></ValidationMessage>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-6 form-floating">
+                                                    <InputText @bind-Value="@CustomerLogged.DeliveryAddress.PhoneNumber" type="tel" class="form-control" id="inputTlfno" placeholder="PhoneNumber" />
+                                                    <label for="inputTlfno">PhoneNumber*</label>
+                                                    <ValidationMessage For="@(() => CustomerLogged.DeliveryAddress.PhoneNumber)"></ValidationMessage>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <button type="submit" class="btn btn-success w-100">Guardar cambios</button>
+                                            </div>
+                                        </EditForm>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--==============================================================================================================-->
+                    </div>
+                </div>
+                <hr />
+                <!--================= section email ==============-->
+                <div class="row">
+                    <div class="col-1">
+                        <!--icono email-->
+                        <img src="/images/email.png" />
+                    </div>
+                    <div class="col-8">
+                        <h6>Correo electronico</h6>
+                        <p><small>@CustomerLogged.CustomerCredentials.Email</small></p>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-outline-light border-dark active w-100" data-bs-toggle="modal" data-bs-target="#modalemail">Modificar</button>
+                        <!--=============================== Modal modify email ============================================================-->
+                        <div class="modal fade" id="modalemail" tabindex="-1" aria-labelledby="emailModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="emailModalLabel">Cambiar correo electronico</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><small>A partir de ahora mandaremos nuestros correos a tu nueva direccion</small></p>
+                                        <h6><strong>Correo electronico actual: </strong><small>@CustomerLogged.CustomerCredentials.Email</small></h6>
+                                        <for>
+                                            <div class="form-group form-floating">
+                                                <input type="email" class="form-control" id="inputEmail" placeholder="Email" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                                <label for="inputEmail">Nuevo correo electronico</label>
+                                            </div>
+                                            <div class="form-group form-floating">
+                                                <input type="email" class="form-control" id="inputConfirmEmail" placeholder="ConfirmEmail" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                                <label for="inputConfirmEmail">Confirmar correo electronico </label>
+                                            </div>
+                                            <div class="form-group form-floating">
+                                                <input type="password" class="form-control" id="inputPassword" placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                                <label for="inputPassword">Contraseña</label>
+                                            </div>
+                                            <div class="form-row">
+                                                <button type="submit" class="btn btn-success w-100">Guardar cambios</button>
+                                            </div>
+                                        </for>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--==============================================================================================================-->
+                    </div>
+                </div>
+                <hr />
+                <!--================== section password =================-->
+                <div class="row">
+                    <div class="col-1">
+                        <!--icon padlock-->
+                        <img src="/images/candado.png" />
+                    </div>
+                    <div class="col-8">
+                        <h6>Tu contraseña</h6>
+                        <span>**************</span>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-outline-light border-dark active w-100" data-bs-toggle="modal" data-bs-target="#modalpassword">Modificar</button>
+                        <!--=============================== Modal modify email ============================================================-->
+                        <div class="modal fade" id="modalpassword" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Cambiar contraseña</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><small>Cambia tu contraseña en cualquier momento para mantener tu cuenta segura.</small></p>
+                                        <form>
+                                            <div class="form-group form-floating">
+                                                <input type="password" class="form-control" id="inputPassword" placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                                <label for="inputPassword">Constraseña</label>
+                                            </div>
+                                            <div class="form-group form-floating">
+                                                <input type="password" class="form-control" id="inputNewPassword" placeholder="NewPassword" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                                <label for="inputNewPassword">Contraseña nueva</label>
+                                            </div>
+                                            <div class="form-group form-floating">
+                                                <input type="password" class="form-control" id="inputConfirmNewPassword" placeholder="ConfirmNewPassword" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                                <label for="inputConfirmNewPassword">Confirmar contraseña</label>
+                                            </div>
+                                            <div class="form-row">
+                                                <button type="submit" class="btn btn-success w-100">Guardar cambios</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--==============================================================================================================-->
+                    </div>
+                </div>
+                <hr />
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    this._navigated.NavigateTo("/Cliente/Login");
+}
+
+@code {
+    [CascadingParameter(Name = "CustomerLogged")] 
+    public Customer CustomerLogged { get; set; }
+
+    private void  UpdateCustomerInfo()
+    {
+
+    }
+}

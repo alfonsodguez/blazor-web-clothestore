@@ -1,0 +1,121 @@
+﻿
+@page "/Tienda/FinalizarPedido"
+@inject IStorageService   _storageService
+@inject IRestService      _restService
+@inject NavigationManager _navigated
+@inject IJSRuntime        _js
+
+<div><h6>&nbsp;</h6></div>
+<div class="container">
+    <div class="row vh-100 justify-content-center">
+        <div class="col-8">
+            <div class="card">
+                <h5 class="card-header"><strong>Datos de envio</strong></h5>
+                <div class="card-body">
+                    <p><small>Es tu direccion de envio? rellene los campos para poder finalizar el envio</small></p>
+                    <EditForm Model="@this.CustomerAddress" OnValidSubmit="@FinaliceOrderPurchase">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                        <div class="form-row">
+                            <div class="form-group col-sm-3">
+                                <label>PhoneNumber*</label>
+                                <InputText @bind-Value="@CustomerAddress.PhoneNumber" type="tel" class="form-control" required />
+                            </div>
+                            <div class="form-group col-sm-9">
+                                <label>Direccion*</label>
+                                <InputText @bind-Value="@CustomerAddress.RoadName" type="text" class="form-control" placeholder="nombre calle, avenida...." required />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-3">
+                                <label>Numero*</label>
+                                <InputText @bind-Value="@CustomerAddress.RoadNumber" type="text" class="form-control" required />
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label>Bloque</label>
+                                <InputText @bind-Value="@CustomerAddress.Block" type="text" class="form-control" />
+
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label>Piso</label>
+                                <InputText @bind-Value="@CustomerAddress.Floor" type="text" class="form-control" />
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <label>Puerta</label>
+                                <InputText @bind-Value="@CustomerAddress.Door" type="text" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-sm-5">
+                                <label>Provincia*</label>
+                                <InputText @bind-Value="@CustomerAddress.Province" type="text" class="form-control"></InputText>
+                            </div>
+                            <div class="form-group col-sm-5">
+                                <label>Localidad*</label>
+                                <InputText @bind-Value="@CustomerAddress.Municipality" type="text" class="form-control"></InputText>
+                            </div>
+                            <div class="form-group col-sm-2">
+                                <label>CP*</label>
+                                <InputText @bind-Value="@CustomerAddress.CP" type="text" class="form-control" required/>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" class="btn btn-success w-100">FinalizarPedido</button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    [CascadingParameter(Name = "CustomerLogged")] 
+    public Customer CustomerLogged { get; set; }
+
+    private Address         CustomerAddress = new Address();
+    private List<OrderItem> OrderItemsList  = new List<OrderItem>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        this._storageService.ItemsRecuperadosIndexedDBEvent += this.GetOrderItemsFromStorage;
+        await this._storageService.RecuperaItemsPedidoFromStorage();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (this.CustomerLogged == null)
+        {
+            this._navigated.NavigateTo("/Cliente/Login");
+        }
+        else
+        {
+            this.CustomerAddress = this.CustomerLogged.DeliveryAddress;
+        }
+    }
+
+    private void GetOrderItemsFromStorage(object sender, List<OrderItem> orderItemsList)
+    {
+        this.OrderItemsList = orderItemsList;
+    }
+
+    private async Task FinaliceOrderPurchase()
+    {
+        this.CustomerLogged.CurrentOrder.OrderList   = this.OrderItemsList;
+        this.CustomerLogged.CurrentOrder.StatusOrder = "en curso";
+        this.CustomerLogged.CurrentOrder.DateOrder   = DateTime.Now;
+
+        Decimal subtotal = this.OrderItemsList.Sum((OrderItem item) => item.SizePrice * item.OrderAmount);
+        this.CustomerLogged.CurrentOrder.SubtotalOrder = subtotal;
+        this.CustomerLogged.CurrentOrder.TotalOrder    = subtotal + this.CustomerLogged.CurrentOrder.DeliveryCosts;
+
+        RESTMessage _response = await this._restService.ModifyCustomerAddress(CustomerAddress);
+        if(_response.Errors == null)
+        {
+            RESTMessage _responseSaveCustomerOrder = await this._restService.SaveCustomerOrder(CustomerLogged.CurrentOrder);
+            this._navigated.NavigateTo("/Tienda/CompraFinalizadaOK");
+        }
+    }
+}

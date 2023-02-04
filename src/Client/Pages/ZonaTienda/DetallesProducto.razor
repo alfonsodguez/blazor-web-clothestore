@@ -1,0 +1,227 @@
+﻿@page "/Tienda/DetallesProducto"
+@inject StateContainerService _stateContainer
+@inject IOrderService         _orderService
+@inject IJSRuntime            _js
+
+<AlertTab></AlertTab>
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <img src="/images/@(this.Clothes.ImageId + ".jpg")" class="img-fluid text-center p-0 m-0 shadow bg-body rounded" alt="img" />
+        </div>
+        <div class="col-6">
+            <div class="container">
+                <div>
+                    <h5><strong>@this.Clothes.Brand</strong></h5>
+                    <h5>@this.Clothes.ProductName-@this.Clothes.CategoryProduct</h5>
+                    <h6><small>Color: <strong>@this.Clothes.Color</strong></small></h6>
+                    @if (this.Clothes.Discount > 0)
+                    {
+                        <h6><small class="text-danger">hasta un @this.Clothes.Discount % de descuento</small></h6>
+                        <h5 class="d-inline text-danger"><strong>@(this.Clothes.Price - Math.Floor(this.Clothes.Discount * this.Clothes.Price * 100) / 100)&nbsp;€</strong></h5>
+                        <span class="d-inline text-muted"><del>@this.Clothes.Price&nbsp;€</del></span>
+                    }
+                    else
+                    {
+                        <h5 class="d-inline">@this.Clothes.Price&nbsp;€</h5>
+                    }
+                    <span class="d-inline text-muted"><small>&nbsp;IVA incluido</small></span>
+                </div>
+                <br />
+                <div>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star checked"></span>
+                    <span class="fa fa-star"></span>
+                    <span class="fa fa-star"></span>
+                </div>
+            </div>
+            <br />
+            <div class="container">
+                <span class="text-danger"><small>@_messageWarning</small></span>
+                <div class="row">
+                    <div class="col">
+                        <select @onchange="(evt) => SelectedSizeChanged(evt)" class="form-select from-select-sm" aria-label=".form-select-sm example">
+                            <option selected>Elige una talla</option>
+                            @foreach (StockProduct item in this.Clothes.Stock)
+                            {
+                                <option value="@item.Size" disabled="@(item.Stock == 0)">@RenderContentOption(item)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <button @onclick="@AddToCart" type="button" class="btn btn-success w-100">Comprar</button>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="container">
+                <div class="card">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-2">
+                                    <img src="/images/delivery-truck.png" alt="img" />
+                                </div>
+                                <div class="col-10">
+                                    <small class="d-inline align-text-top">3-7 días laborables</small><br />
+                                    <small class="">Envío estandar: <strong>gratuito</strong></small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="list-group-item">
+                            <img src="/images/delivery-box.png" alt="img" />
+                            <small class="d-inline">&nbsp; envío y devolucion gratuitos</small>
+                        </li>
+                        <li class="list-group-item">
+                            <img src="/images/flecha.png" alt="img" />
+                            <small class="d-inline">&nbsp; derecho de devolucion de 100 días</small>
+                        </li>
+                        <li class="list-group-item" alt="img">
+                            <img src="/images/package-return.png">
+                            <small class="d-inline">&nbsp; vuelve a venderlo</small>
+                        </li>
+                    </ul>
+                </div>
+                <br />
+                <div class="container">
+                    <!--class accordion boostrap-->
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h6 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Composición y cuidados</button>
+                            </h6>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    @foreach (String row in this.Clothes.Materials.Split("_"))
+                                    {
+                                        <p><small>@row</small></p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h6 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Características del producto</button>
+                            </h6>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    @foreach (String row in this.Clothes.Feature.Split("_"))
+                                    {
+                                        <p><small>@row</small></p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h6 class="accordion-header" id="headingOne">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Size y corte</button>
+                            </h6>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="collapseThree" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    @foreach (String row in this.Clothes.SizeCut.Split("_"))
+                                    {
+                                        <p><small>@row</small></p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private Decimal      _discount;
+    private bool         _isSizeSelected = false;
+    private String       _messageWarning = null;
+    private String       _sizeSelected;
+    private StockProduct _stockSizeSelect;
+
+    //-------------- badge layout -------------
+    [CascadingParameter]
+    public __Layout LayoutContainer { get; set; }  //<---**magic**
+
+    [Parameter]
+    public int NumberOfItemsInCard { get; set; }
+
+    //------------- StateContainer --------------
+    protected Product Clothes;
+    protected List<String> CounterClicksBySize;
+
+    protected override void OnParametersSet()
+    {
+        this.CounterClicksBySize = this._stateContainer.SelectListOfClicksBySize ?? new List<string>();
+        this.NumberOfItemsInCard = LayoutContainer.GetNumberOfItemsInCard(); 
+
+        this.Clothes = this._stateContainer.SelectProduct;
+        if (this.Clothes.Discount > 0)
+        {
+            this._discount = this.Clothes.Price - Math.Floor(this.Clothes.Discount * this.Clothes.Price * 100) / 100;
+        }
+    }
+
+    private RenderFragment<StockProduct> RenderContentOption = item => __builder =>
+    {
+    <span>
+        <strong>@item.Size</strong>
+        @if (item.SizePrice != null)
+            {
+            <small class="text-danger">-@item.SizePrice&nbsp;€</small>
+            }
+        @if (item.Stock > 0 && item.Stock < 3)
+            {
+            <small>-Solo @item.Stock disponibles</small>
+            }
+    </span>
+    };
+
+    private void SelectedSizeChanged(ChangeEventArgs evt)
+    {
+        if (evt.Value.ToString() != "Elige una talla")
+        {
+            this._isSizeSelected  = true;
+            this._messageWarning  = null;
+            this._sizeSelected    = evt.Value.ToString();
+            this._stockSizeSelect = this.Clothes.Stock.Where((StockProduct stock) => stock.Size == _sizeSelected).Single();
+        }
+    }
+
+    private void SetNumberOfItemsInCard(int numberItemsCard)
+    {
+        this.LayoutContainer.SetNumberOfItemsInCard(numberItemsCard);
+    }
+
+    private async Task AddToCart()
+    {
+        if (!_isSizeSelected)
+        {
+            this._messageWarning = "*Selecciona una talla";
+        }
+        else
+        {
+            this.CounterClicksBySize.Add(this._sizeSelected);
+            this._stateContainer.SaveListOfClicksBySize(this.CounterClicksBySize);
+
+            int _counterClicksBySizeSelected = this.CounterClicksBySize.Count((String size) => size == this._sizeSelected);
+            int _numMaxPurchaseBySize        = (this._stockSizeSelect.Stock > 3) ? 3 : this._stockSizeSelect.Stock;
+
+            if (_counterClicksBySizeSelected > _numMaxPurchaseBySize)
+            {
+                await this._js.InvokeVoidAsync("alert", "Has llegado al límite de compra de la talla del producto!!", "danger", true);
+            }
+            else
+            {
+                this.NumberOfItemsInCard += 1;
+                this.SetNumberOfItemsInCard(NumberOfItemsInCard);
+                this._orderService.AddProductInOrder(Clothes, _stockSizeSelect);
+                //delete alerttab
+                await this._js.InvokeVoidAsync("alert", null, false);                
+            }
+        }
+        StateHasChanged();
+    }
+}

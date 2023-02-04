@@ -1,0 +1,11 @@
+﻿<div class="row">
+    @foreach (Product oneProduct in Tuple)
+    {
+        <MiniProducto Clothes="@oneProduct"></MiniProducto>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<Product> Tuple { get; set; } 
+}

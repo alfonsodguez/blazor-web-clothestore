@@ -1,0 +1,40 @@
+﻿
+@page "/Tienda/CompraFinalizadaOK"
+@layout EmptyLayout
+@inject IStorageService       _storeService
+@inject IOrderService         _orderService
+@inject NavigationManager     _navigated
+@inject StateContainerService _stateContainer
+
+<header>
+    <div class="row" style="background-color: whitesmoke">
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+                <img src="/images/logo_zalandu.png" alt="img">
+            </a>
+        </nav>
+    </div>
+</header>
+<div><h6>&nbsp;</h6></div>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col" style="text-align: center">
+            <img src="/images/pedido_ok.png" />
+            <div><h6>&nbsp;</h6></div>
+            <p>Su pedido se encuentra en curso. Gracias por comprar en nuestra tienda</p> 
+            <div>
+                <button @onclick="@(() => this._navigated.NavigateTo("/"))" type="button" class="btn btn-success">VOLVER A LA TIENDA</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        this._orderService.CleanItemsFromObservable();
+        this._stateContainer.NumberOfItemsInCard = 0;
+        StateHasChanged();
+    }
+}

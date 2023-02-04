@@ -1,0 +1,96 @@
+﻿
+@page "/Cliente/Registro" 
+@layout EmptyLayout
+@inject IJSRuntime        _js
+@inject IRestService      _servicioRest
+@inject NavigationManager _navigated
+   
+<div class="col-6 d-flex justify-content-center">
+    <!--logo web site zalandu-->
+    <button @onclick="@(() => this._navigated.NavigateTo("/Tienda"))" class="btn btn-outline-light border-0">
+        <img src="images/logo_zalandu.png" />
+    </button>
+</div>
+<div class="container">
+    <div class="row vh-100 justify-content-center align-items-center">
+        <div class="col-4">
+            <EditForm Model="@_newCustomer" OnValidSubmit="@CustomerSignup">
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+                <ValidationSummary></ValidationSummary>
+                <AlertTab></AlertTab>
+                <span class="text-danger">@this._messageErr</span>
+                <div class="card w-100 p-3 border border-secondary" style="background-color: snow">
+                    <div class="mb-4 card-body">
+                        <div class="card-title text-center">
+                            <h5 class="card-title"><strong>Soy nuevo/a</strong></h5>
+                        </div>
+                        <hr />
+                        <div class="form-group form-floating">
+                            <InputText @bind-Value="@_newCustomer.Name" class="form-control" id="inputNombre" placeholder="Nombre" required />
+                            <label for="inputNombre">Nombre</label>
+                            <small><ValidationMessage For="@(()=> _newCustomer.Name)"></ValidationMessage></small>
+                        </div>
+                        <div class="form-group form-floating">
+                            <InputText @bind-Value="@_newCustomer.Surname" class="form-control" id="inputApe" placeholder="Apellidos" required />
+                            <label for="inputApe">Apellidos</label>
+                            <small><ValidationMessage For="@(()=> _newCustomer.Surname)"></ValidationMessage></small>
+                        </div>
+                        <div class="form-group form-floating">
+                            <InputText @bind-Value="@_newCustomer.CustomerCredentials.Email" type="email" class="form-control" id="inputEmail" placeholder="name@example.com" required />
+                            <label for="inputEmail">Email</label>
+                            <small><ValidationMessage For="@(()=> _newCustomer.CustomerCredentials.Email)"></ValidationMessage></small>
+                        </div>
+                        <div class="form-group form-floating">
+                            <InputText @bind-Value="@_newCustomer.CustomerCredentials.Password" type="password" class="form-control" id="inputPassword" placeholder="Password" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                            <label for="inputPassword">Password</label>
+                            <small id="passwordHelpBlock" class="form-text text-muted">@_message</small>
+                            <small><ValidationMessage For="@(() => _newCustomer.CredentCustomerCredentialsialsCliente.Password)"></ValidationMessage></small>
+                        </div>
+                        <div class="form-group form-floating">
+                            <InputText @bind-Value="@_newCustomer.CustomerCredentials.ConfirmPassword" type="password" class="form-control" id="inputRePass" placeholder="ConfirmPassword" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                            <label for="inputRePass">Confirm Password</label>
+                            <small><ValidationMessage For="@(()=> _newCustomer.CustomerCredentials.ConfirmPassword)"></ValidationMessage></small>
+                        </div>
+                        <div class="form-row">
+                            <button type="submit" class="btn btn-success w-100">Regístrate</button>
+                        </div>
+                    </div>
+                </div>
+            </EditForm>
+            <hr />
+            <div>
+                <h6><strong>Tengo cuenta</strong></h6>
+                <button @onclick="@(() => this._navigated.NavigateTo($@"/Cliente/Login"))" type="button" class="btn btn-light border-dark w-100">Iniciar sesión</button>
+            </div>
+            <br />           
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private Customer _newCustomer = new Customer();
+    private String   _message     = null;
+    private String   _messageErr  = "";
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this._message = $"*Al menos 8 caracteres, letras(min, may), numeros y símbolos";
+    }
+
+    protected async Task CustomerSignup()
+    {
+        RESTMessage _response = await this._servicioRest.CustomerSignUp(_newCustomer);
+        if(_response.Errors == null)
+        {
+            this._navigated.NavigateTo("/Cliente/Login");
+        }
+        else
+        {
+            await this._js.InvokeVoidAsync("alert", _response.Message, "danger", false);
+            this._messageErr = _response.Message;
+            StateHasChanged();
+        }
+    }
+}

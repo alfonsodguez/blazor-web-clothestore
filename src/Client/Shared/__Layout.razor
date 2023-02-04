@@ -1,0 +1,214 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager     _navigated
+@inject IJSRuntime            _js
+@inject IRestService          _restService
+@inject IStorageService       _storeService
+@inject StateContainerService _stateContainer
+@using Zalandu.Client.Shared
+@using Zalandu.Client.Pages.ZonaTienda
+
+<CascadingValue Value="@CustomerLogin" Name="CustomerLogged">
+    <!--==== **magic** ====-->
+    <CascadingValue Value="this"> 
+        <header>
+            <div class="row" style="background-color: whitesmoke;">
+                <nav class="nav nav-pills nav-justified">
+                    <span class="nav-item text-muted"><small>Ayuda y contacto</small></span>
+                    <span class="nav-item text-muted"><small>Envios y devoluciones gratuitos*</small></span>
+                    <span class="nav-item text-muted"><small>Derecho de devolución de 100 días</small></span>
+                </nav>
+            </div>
+            <div class="container">
+                <nav class="navbar navbar-light">
+                    <div class="row container-fluid" style="background-color: white;">
+                        <!--buttons woman, men, childs-->
+                        <div class="col-3" >
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item border-0">
+                                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalmujer">Mujer</button>
+                                    <!--=============================== Modal woman section ==========================================================-->
+                                    <div class="modal fade" id="modalmujer" tabindex="-1" aria-labelledby="mujerModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <img src="images/information-button.png" />
+                                                    <h5 class="modal-title" id="mujerModalLabel">&nbsp;Información</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><span>La sección ropa de mujer se encuentra en este momento en mantenimiento, vuelva a intentarlo más tarde.</span></p>
+                                                    <img src="/images/spanish_trabajador.jpg" class="img-fluid text-center" alt="img" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--==============================================================================================================-->
+                                </li>
+                                <li class="list-group-item border-0">
+                                    <NavLink href="/Tienda/Productos/Ropa" class="btn btn-outline-dark" role="button">Hombre</NavLink>
+                                </li>
+                                <li class="list-group-item border-0">
+                                    <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#modalninio">Niños</button>
+                                    <!--================================== Modal child section ========================================================-->
+                                    <div class="modal fade" id="modalninio" tabindex="-1" aria-labelledby="ninioModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <img src="images/information-button.png" />
+                                                    <h5 class="modal-title" id="ninioModalLabel">&nbsp;Información</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p><span>La seccion ropa de niño se encuentra en este momento en mantenimiento, vuelva a intentarlo mas tarde.</span></p>
+                                                    <img src="/images/enanitos_trabajando.jpg" class="img-fluid text-center" alt="img" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--==============================================================================================================-->
+                                </li>
+                            </ul>
+                        </div>
+                        <!--logo zalandu web site-->
+                        <div class="col-6 d-flex justify-content-center">
+                            <button @onclick="@(() => this._navigated.NavigateTo("/Tienda", true))" class="btn btn-outline-light border-0">
+                                <img src="images/logo_zalandu.png" />
+                            </button>
+                        </div>
+                        <!--icon login, favourite, shoping card-->
+                        <div class="col-3 d-flex justify-content-lg-end">
+                            <ul class="list-group list-group-horizontal">
+                                <!--user profile-->
+                                <li class="list-group-item border-0 d-flex align-items-center">
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#modaluser" role="button"><img src="images/user.png" /></a>
+                                    <!--============================ Modal to registry and login ==============================================-->
+                                    <div class="modal fade" id="modaluser" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    @if(this.CustomerLogin == null)
+                                                    {
+                                                        <div class="align-content-center">
+                                                            <!--close modal with 'data-bs-dimiss'-->
+                                                            <button @onclick='() => Redirection("Login")' data-bs-dismiss="modal" type="button" class="btn btn-success w-100">Iniciar sesión</button>
+                                                            <br />
+                                                            <button class="btn btn-link" @onclick='() => Redirection("Registro")' data-bs-dismiss="modal" type="button"><small>¿Nuevo cliente?</small></button>
+                                                            <small>¡Regístrate ahora!</small>                                                        
+                                                        </div>
+                                                        <hr />
+                                                    }                                                    
+                                                    <div class="list-group">
+                                                        <button @onclick='() => Redirection("/Panel")' data-bs-dismiss="modal" type="button" class="list-group-item list-group-item-action border-0">Tu perfil</button>
+                                                        <button @onclick='() => Redirection("/Panel/DireccionEnvio")' data-bs-dismiss="modal" type="button" class="list-group-item list-group-item-action border-0">Direccion de envio</button>
+                                                        <button @onclick='() => Redirection("/Panel/Pedidos")' data-bs-dismiss="modal" type="button" class="list-group-item list-group-item-action border-0">Pedidos</button>
+                                                        @if(this.CustomerLogin != null)
+                                                        {
+                                                            <hr />
+                                                            <button @onclick="@DeleteSesionFromIndexedDB" data-bs-dismiss="modal" type="button" class="list-group-item list-group-item-action border-dark rounded">¿No eres @this.CustomerLogin.Name? Desconectar</button>
+                                                        }    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--=======================================================================================================-->
+                                </li>
+                                <!--favourites-->
+                                <li class="list-group-item border-0 d-flex align-items-center">
+                                    <a href="#" role="button"><img src="images/heart.png" /></a>
+                                </li>
+                                <!--badge shoping card-->
+                                <li class="list-group-item border-0">                                    
+                                    <NavLink href="/Tienda/MostrarPedido" class="btn btn-outline-light position-relative border-0" role="button">
+                                        <img src="images/shopping-cart.png" />
+                                        @if (this.CustomerLogin != null || this.NumberItemsCard > 0)
+                                        {
+                                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                @this.NumberItemsCard
+                                                <span class="visually-hidden">unread messages</span>
+                                            </span>
+                                        }
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <hr />
+        </header>
+        <div class="container">
+            <div class="row p-5" style="position:relative; top: -50px">
+                <nav class="col-sm-2">
+                    <!--treeview categories and profile-panel-->                
+                    @if (!this._navigated.Uri.Contains("/Tienda/FinalizarPedido")) 
+                    {
+                        <PanelCategorias></PanelCategorias>
+                    }
+                    else if (this._navigated.Uri.Contains("/Cliente/Panel")) 
+                    {
+                        if(this.CustomerLogin != null)
+                        {
+                            <PanelPerfil></PanelPerfil>
+                        }
+                    }
+                </nav>
+                <main class="col-sm-10">
+                    @Body
+                </main>
+            </div>
+        </div>
+        <div class="row"><h6>&nbsp;</h6></div>
+        <footer class="border-top card-footer text-muted">
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <small>&copy; Zalandú S.A. 2022. Reservados todos los derechos</small>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </CascadingValue>
+</CascadingValue>
+
+
+@code {    
+    public Customer CustomerLogin   { get; set; }
+    public int      NumberItemsCard { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        this._storeService.GetCustomerFromIndexDBEvent += this.GetCustomer;
+        await this._storeService.GetCustomerFromStorage();
+        this.NumberItemsCard = this._stateContainer.NumberOfItemsInCard;
+    }
+
+    private void GetCustomer(object sender, Customer customerInfoService)
+    {
+        this.CustomerLogin = customerInfoService;
+        StateHasChanged();
+    }
+
+    public void SetNumberOfItemsInCard(int numItems)
+    {
+        this.NumberItemsCard = numItems;
+        StateHasChanged();
+    }
+
+    public int GetNumberOfItemsInCard()
+    {
+        return this.NumberItemsCard;
+    }
+
+    private void Redirection(String direction)
+    {
+        this._navigated.NavigateTo($"/Cliente/{ direction }");
+    }
+
+    private async Task DeleteSesionFromIndexedDB()
+    {
+        await this._storeService.DeleteStorage();
+        StateHasChanged();
+        this._navigated.NavigateTo("/", true);
+    }
+}

@@ -1,0 +1,26 @@
+﻿@inject StateContainerService _stateContainer
+@implements IDisposable
+@using Zalandu.Client.Pages.ZonaTienda 
+
+
+@_stateContainer.SelectProduct
+@_stateContainer.SelectListOfClicksBySize
+@_stateContainer.NumberOfItemsInCard
+
+<MiniProducto></MiniProducto>
+<DetallesProducto></DetallesProducto>
+<MostrarPedido></MostrarPedido>
+<__Layout></__Layout>
+
+@code {     
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        this._stateContainer.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        this._stateContainer.OnChange -= StateHasChanged;
+    }
+}

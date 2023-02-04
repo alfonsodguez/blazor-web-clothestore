@@ -1,0 +1,118 @@
+﻿@page "/Cliente/Panel/DeliveryAddress"
+@inject IRestService      _restService
+@inject NavigationManager _navigated
+
+<div class="container">
+    <div>
+        <h5>Direcciones</h5>
+        <p><small>Añade y modifica tu direccion de envio</small></p>
+    </div>
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h6 class="card-title"><strong>Domicilio:</strong></h6>
+            <div class="card-text"><small>@_currentAddress.RoadName</small></div>
+            <div class="card-text"><small>@_currentAddress.CP</small></div>
+            <div class="card-text"><small>@_currentAddress.Municipality</small></div>
+            <div class="card-text"><small>@_currentAddress.Province</small></div>
+            <br />
+            <div>
+                <button type="button" class="btn btn-outline-light border-dark active w-100" data-bs-toggle="modal" data-bs-target="#modaldirecc">Modificar</button>
+                <!--==================================================== Modal modify address ==============================================================-->
+                <div class="modal fade" id="modaldirecc" tabindex="-1" aria-labelledby="dirModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="dirModalLabel">Modificar direccion</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <EditForm Model="this._currentAddress" OnValidSubmit="@UpdateDeliveryAddress">
+                                    <DataAnnotationsValidator></DataAnnotationsValidator>
+                                    <div class="form-group form-floating">
+                                        <InputText @bind-Value="@_currentAddress.RoadName" class="form-control" id="inputDireccion" placeholder="nombre calle, avenida...." aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                        <label for="inputDireccion">Direccion*</label>
+                                        <ValidationMessage For="@(() => _currentAddress.RoadName)"></ValidationMessage>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group form-floating col-sm-6">
+                                            <InputText @bind-Value="@_currentAddress.RoadNumber" type="text" class="form-control" id="inputNumero" placeholder="numero" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" required />
+                                            <label for="inputNumero">Numero*</label>
+                                            <ValidationMessage For="@(() => _currentAddress.RoadNumber)"></ValidationMessage>
+                                        </div>
+                                        <div class="form-group form-floating col-sm-6">
+                                            <InputText @bind-Value="@_currentAddress.Block" type="text" class="form-control" id="inputBloque" placeholder="bloque" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
+                                            <label for="inputBloque">Bloque</label>
+                                            <ValidationMessage For="@(() => _currentAddress.Block)"></ValidationMessage>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group form-floating col-sm-6">
+                                            <InputText @bind-Value="@_currentAddress.Floor" type="text" class="form-control" id="inputPiso" placeholder="piso" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
+                                            <label for="inputPiso">Piso</label>
+                                            <ValidationMessage For="@(() => _currentAddress.Floor)"></ValidationMessage>
+                                        </div>
+                                        <div class="form-group form-floating col-sm-6">
+                                            <InputText @bind-Value="@_currentAddress.Door" type="text" class="form-control" id="inputPuerta" placeholder="puerta" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
+                                            <label for="inputPuerta">Puerta</label>
+                                            <ValidationMessage For="@(() => _currentAddress.Door)"></ValidationMessage>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <h6><strong>&nbsp;Pais: <small>España</small></strong></h6>
+                                    </div>
+                                    <br />
+                                    <div class="form-row">
+                                        <div class="form-group col-sm-4">
+                                            <InputText @bind-Value="@_currentAddress.Province" type="text" class="form-control" id="inputProv" placeholder="provincia" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"></InputText>
+                                            <label for="inputProv">Provincia*</label>
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <InputText @bind-Value="@_currentAddress.Province" type="text" class="form-control" id="inputMuni" placeholder="municipio" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"></InputText>
+                                            <label for="inputMuni">Municipio*</label>
+                                        </div>
+                                        <div class="form-group form-floating col-sm-4">
+                                            <InputNumber @bind-Value="@_currentAddress.CP" type="text" class="form-control" id="inputCP" placeholder="CP" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" />
+                                            <label for="inputCP">CP*</label>
+                                            <ValidationMessage For="@(() => _currentAddress.CP)"></ValidationMessage>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <button type="submit" class="btn btn-success w-100">Guardar cambios</button>
+                                    </div>
+                                </EditForm>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--==============================================================================================================-->
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [CascadingParameter(Name = "CustomerLogged")]
+    public Customer CustomerLogged { get; set; }
+
+    private Address _currentAddress = new Address();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        this._currentAddress = this.CustomerLogged.DeliveryAddress;
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (this.CustomerLogged == null)
+        {
+            this._navigated.NavigateTo("/Cliente/Login");
+        }
+    }
+
+    private void UpdateDeliveryAddress()
+    {
+        this.CustomerLogged.DeliveryAddress = this._currentAddress;
+    }
+}

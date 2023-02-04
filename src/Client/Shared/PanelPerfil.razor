@@ -1,0 +1,22 @@
+﻿@inject NavigationManager _navigated
+
+<nav class="nav flex-column">
+    <h5><strong>Tu Cuenta:</strong></h5>
+    <div class="list-group">
+        @foreach (String option in _panelOptions)
+        {
+            <NavLink @onclick="@(() => this._navigated.NavigateTo($@"/Cliente/Panel/{option.Split(';')[1]}"))" class="list-group-item list-group-item-action">
+                @option.Split(";")[0]
+            </NavLink>
+        }
+    </div>
+</nav>
+
+
+@code {
+    private List<String> _panelOptions = new List<string> {
+        "Tus Datos;DatosCliente",
+        "Direccion;DireccionEnvio",
+        "Tus Pedidos;Pedidos"
+    };
+}

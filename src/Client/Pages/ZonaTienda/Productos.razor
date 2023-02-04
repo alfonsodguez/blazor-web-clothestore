@@ -1,0 +1,23 @@
+﻿
+@page "/Tienda/Productos/{CategoryName}"
+@inject IRestService _restService
+@inject IJSRuntime   _js
+
+<div class="container">
+    @for (int i = 0; i < _listProducts.Count; i = i+3)
+    {
+        <Tupla3Productos Tuple="@(this._listProducts.Skip<Product>(i).Take<Product>(3).ToList<Product>())"></Tupla3Productos>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public String CategoryName { get; set; } 
+
+    private List<Product> _listProducts = new List<Product>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        this._listProducts = await this._restService.GetProducts(this.CategoryName);
+    }
+}

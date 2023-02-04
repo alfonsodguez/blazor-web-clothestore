@@ -1,4 +1,4 @@
-# blazor-web-clothestore
+# 🛍️ blazor-web-clothestore 👢
 Aplicacion web: Comercio de ropa 
 
 
@@ -42,7 +42,7 @@ Para la creación del diagrama de base de datos instalé las dependencias de *Vi
 
 ![](./doc/diagram.png)
 
-## **DESARROLLOS A DESTACAR** 
+## 🚀 **DESARROLLOS A DESTACAR** 🚀
 ## ***TreeView*** 
 El *treeview* está pensado para ser escalable, independientemente de las categorías o subcategorías que se le puedan añadir en un futuro desarrollo, se van a mostrar correctamente.  
 

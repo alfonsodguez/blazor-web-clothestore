@@ -147,26 +147,26 @@ Para  la  creación  de  las  tablas  me  he  servido  de  *EF*,  lo  que  me  h
 
 La implementación para almacenar y recuperar listas es mucho más compleja que para objetos. Como podemos observar en la siguiente captura: 
 
-![](./doc/entity.jpeg)
+![](./doc/entity.png)
 
 En la base de datos lo almacena serializado como un *JSON* tal como se muestra aquí: 
 
-![](./doc/entity2.jpeg)
+![](./doc/entity2.png)
 
 Con objetos es más sencillo: 
 
-![](./doc/entity3.jpeg)
+![](./doc/entity3.png)
 
 En la tabla se vería así: 
 
-![](./doc/entity4.jpeg)
+![](./doc/entity4.png)
 
 ## ***Control de stock y transacciones*** 
 Una vez que el usuario finaliza la compra, se realiza una actualización de las tablas que  intervienen  en  el  proceso:  “PedidoCliente”,  “ItemsPedido”,  “StockProducto”. Como hay que lanzar varias operaciones de escritura sobre la base de datos, hago uso de las *transacciones* para que se grabe en todas las tablas haciendo *commit,* o 
 
 en ninguna, con un *auto*-*rollback* en caso de una no deseable circunstancia externa. 
 
-![](./doc/stock.jpeg)
+![](./doc/stock.png)
 
 **Ilustración 9: fragmento de código del “ClienteController”** 
 
@@ -177,11 +177,11 @@ El *badge* es un componente de *Bootstrap* que uso para informar al usuario de q
 
 Aquí una comparativa visual del icono de la cesta sin compra y con la cesta llena. 
 
-![](./doc/badge1.jpeg)
+![](./doc/badge1.png)
 
 **Ilustración 10: *header* del *layout*** 
 
-![](./doc/badge2.jpeg)
+![](./doc/badge2.png)
 
 **Ilustración 11: fragmento código *html* del *Layout*** 
 
@@ -189,19 +189,19 @@ Lo más importante de esta implementación es que intervienen varios componentes
 
 Todo esto ha de ser sincronizado para que la información sea consistente allá donde se  use.  Para  lograrlo,  hago  dos  cosas:  usar  el  *state  container*  -  necesario  sino perderíamos estos datos temporales- y pasar en cascada el *layout* -eso nos permite tener acceso a los métodos implementados en este-. 
 
-![](./doc/badge3.jpeg)
+![](./doc/badge3.png)
 
 El uso del objeto *\_\_Layout* en un componente se haría de la siguiente manera:  
 
-![](./doc/badge4.jpeg)
+![](./doc/badge4.png)
 
  ## ***Alert tab y control de clics en botón comprar***  
 El componente *alert* de *Bootstrap* se “dispara” cuando un usuario infringe la regla de negocio  que  he  mencionado  anteriormente.  Para  ello  hago  un  seguimiento  del número de clics que se hacen por talla de producto. 
 
-![]()
+![](./doc/alerttab1.png)
 
 Aquí  sí  que  he  necesitado  usar  código  JavaScript  para  mostrar  y  cerrar  esta etiqueta. Esto es posible gracias al mecanismo de interoperabilidad *JSRuntime* que provee *Blazor*. 
 
-![]()
+![](./doc/alerttab2.png)
 
 Llamo  a  mi  función   JavaScript  “alert”.  Esta  es  una  función  que  admite  tres parámetros: el mensaje de alerta que quiero que aparezca en la vista, el tipo de componente  *alert,*  en  mi  caso  *danger,*  y  por  último,  si  lo  quiero  hacer  visible  u ocultarlo. 

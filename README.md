@@ -40,7 +40,7 @@ Si un usuario trata de comprar un número mayor a estas dos cotas, se mostrará 
 ## **DIAGRAMA DE BASE DE DATOS** 
 Para la creación del diagrama de base de datos instalé las dependencias de *Visual Studio Build Tools*. En la siguiente captura se puede observar como solo represento aquellas tablas necesarias para el funcionamiento de mi aplicación, por tanto, omito las que se crean por defecto con *EF*. ![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.001.png)
 
-![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.002.jpeg)
+![](diagram.png)
 
 ## **DESARROLLOS A DESTACAR** 
 ## ***TreeView*** 

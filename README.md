@@ -70,9 +70,9 @@ Vayamos al código:
 
 Estos dos componentes conforman el *treeview*.  
 
-El componente “padre*”*, “PanelCategorias”, le pasa la lista de categorías que se ha recuperado de la base de datos, además del identificador, al componente hijo. Este último,  usará  el identificador  para  saber  por  qué  categoría  tiene que  empezar  a “pintar”. 
+El componente “padre”, “PanelCategorias”, le pasa la lista de categorías que se ha recuperado de la base de datos, además del identificador, al componente hijo. Este último,  usará  el identificador  para  saber  por  qué  categoría  tiene que  empezar  a “pintar”. 
 
-En este caso, el identificador será el valor 0 y se corresponderá a las categorías raíz: ropa, deporte, zapatos y complementos. Una vez encontrada la primera categoría, busca todas aquellas subcategorías “hijas*”* que coincidan con el identificador de esta categoría raíz y lo mismo pasaría con las categorías “nietas”, solo que cambiamos la condición anterior  por el identificador de las categorías “hijas”. 
+En este caso, el identificador será el valor 0 y se corresponderá a las categorías raíz: ropa, deporte, zapatos y complementos. Una vez encontrada la primera categoría, busca todas aquellas subcategorías “hijas” que coincidan con el identificador de esta categoría raíz y lo mismo pasaría con las categorías “nietas”, solo que cambiamos la condición anterior  por el identificador de las categorías “hijas”. 
 
 ## ***Productos, tallas y stock***  
 Así se vería en la aplicación la vista con los detalles de un producto cualquiera:
@@ -122,7 +122,7 @@ Veamos su uso en el componente:
 
 ![](./doc/statecontainer3.png)
 
-Este componente “hijo*”* recibe un objeto Producto pasado por el componente “padre” en cascada. A continuación, se envía al *state container* por medio de uno de sus  métodos “PassProducto” que ha sido inyectado. Una vez “almacenado” en el *state container,* podemos recuperarlo en otros componentes. No obstante, solo pueden ser    aquellos que he mencionado con anterioridad.  
+Este componente “hijo” recibe un objeto Producto pasado por el componente “padre” en cascada. A continuación, se envía al *state container* por medio de uno de sus  métodos “PassProducto” que ha sido inyectado. Una vez “almacenado” en el *state container,* podemos recuperarlo en otros componentes. No obstante, solo pueden ser    aquellos que he mencionado con anterioridad.  
 
 El código para recuperar esos datos se ve da la siguiente forma: 
 

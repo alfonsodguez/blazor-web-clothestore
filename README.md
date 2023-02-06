@@ -20,7 +20,7 @@ A  continuación  enumero  las  funcionalidades  más  importantes  que  se  pre
 * Uso de *modales* y *badge* de *Bootstrap.* 
 
 ## **DESCRIPCIÓN DE LAS TECNOLOGÍAS UTILIZADAS**  
-Para crear *Zalandú*, escogí la tecnología de *Blazor* apoyada en el *C#* y con escaso uso de JavaScript, únicamente para manejar en *localStorage,* y algún componente de *Bootstrap,* como los *alerts*, debido a la comodidad que proporcionan tanto el IDE propio  *VS*  como  la  potencia  *C#,*  facilitando  mucho  el  desarrollo.  Todo  ello  en *frontend*. 
+Para crear *Zalandú*, escogí la tecnología de *Blazor* apoyada en el *C#* y con escaso uso de JavaScript, únicamente para manejar el *IndexedDB* y algún componente de *Bootstrap,* como los *alerts*, debido a la comodidad que proporcionan tanto el IDE propio  *VS*  como  la  potencia  *C#,*  facilitando  mucho  el  desarrollo.  Todo  ello  en *frontend*. 
 
 En  *backend*  hago  uso  del  propio  servidor que  se  crea  por  defecto  al  iniciar  un proyecto *Blazor* en *VS*. 
 

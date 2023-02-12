@@ -1,5 +1,5 @@
 # 🛍️ blazor-web-clothestore 👢
-Aplicacion web: Comercio de ropa 
+Ejemplo de tienda de ropa online.
 
 
 ## **INTRODUCCIÓN** 
@@ -38,7 +38,7 @@ Otra estrategia que he llevado a cabo es permitir que solo se pueda comprar un m
 Si un usuario trata de comprar un número mayor a estas dos cotas, se mostrará un *tab* o etiqueta de alerta; para ello use el componente *alert* de *Bootstrap*. 
 
 ## **DIAGRAMA DE BASE DE DATOS** 
-Para la creación del diagrama de base de datos instalé las dependencias de *Visual Studio Build Tools*. En la siguiente captura se puede observar como solo represento aquellas tablas necesarias para el funcionamiento de mi aplicación, por tanto, omito las que se crean por defecto con *EF*. ![](Aspose.Words.a40b87a9-766e-4dd0-bc1a-62f5e3c27ee2.001.png)
+Para la creación del diagrama de base de datos instalé las dependencias de *Visual Studio Build Tools*. En la siguiente captura se puede observar como solo represento aquellas tablas necesarias para el funcionamiento de mi aplicación, por tanto, omito las que se crean por defecto con *EF*. 
 
 ![](./doc/diagram.png)
 
@@ -162,9 +162,7 @@ En la tabla se vería así:
 ![](./doc/entity4.png)
 
 ## ***Control de stock y transacciones*** 
-Una vez que el usuario finaliza la compra, se realiza una actualización de las tablas que  intervienen  en  el  proceso:  “PedidoCliente”,  “ItemsPedido”,  “StockProducto”. Como hay que lanzar varias operaciones de escritura sobre la base de datos, hago uso de las *transacciones* para que se grabe en todas las tablas haciendo *commit,* o 
-
-en ninguna, con un *auto*-*rollback* en caso de una no deseable circunstancia externa. 
+Una vez que el usuario finaliza la compra, se realiza una actualización de las tablas que  intervienen  en  el  proceso:  “PedidoCliente”, “ItemsPedido”,  “StockProducto”. Como hay que lanzar varias operaciones de escritura sobre la base de datos, hago uso de las *transacciones* para que se grabe en todas las tablas haciendo *commit,* o en ninguna, con un *auto*-*rollback* en caso de una no deseable circunstancia externa. 
 
 ![](./doc/stock.png)
 

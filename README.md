@@ -18,6 +18,7 @@ A  continuación  enumero  las  funcionalidades  más  importantes  que  se  pre
 * Uso de *templated component.* 
 * Sincronización entre los distintos elementos que conforman la aplicación. 
 * Uso de *modales* y *badge* de *Bootstrap.* 
+* Uso de programación reactiva con observables para el control de la cesta.
 
 ## **DESCRIPCIÓN DE LAS TECNOLOGÍAS UTILIZADAS**  
 Para crear *Zalandú*, escogí la tecnología de *Blazor* apoyada en el *C#* y con escaso uso de JavaScript, únicamente para manejar el *IndexedDB* y algún componente de *Bootstrap,* como los *alerts*, debido a la comodidad que proporcionan tanto el IDE propio  *VS*  como  la  potencia  *C#,*  facilitando  mucho  el  desarrollo.  Todo  ello  en *frontend*. 
